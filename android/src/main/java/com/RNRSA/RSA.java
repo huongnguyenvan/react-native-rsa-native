@@ -107,13 +107,14 @@ public class RSA {
 
     public String getPublicKey() throws IOException {
        byte[] pkcs1PublicKey = publicKeyToPkcs1(this.publicKey);
-       return dataToPem(PUBLIC_HEADER, pkcs1PublicKey);
-        // return Base64.encodeToString(this.publicKey.getEncoded(), Base64.DEFAULT);
+       dataToPem(PUBLIC_HEADER, pkcs1PublicKey);
+       return Base64.encodeToString(this.publicKey.getEncoded(), Base64.NO_WRAP);
     }
 
     public String getPrivateKey() throws IOException {
         byte[] pkcs1PrivateKey = privateKeyToPkcs1(this.privateKey);
-        return dataToPem(PRIVATE_HEADER, pkcs1PrivateKey);
+        dataToPem(PRIVATE_HEADER, pkcs1PrivateKey);
+        return Base64.encodeToString(this.privateKey.getEncoded(), Base64.NO_WRAP);
     }
 
     public void setPublicKey(String publicKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
@@ -172,12 +173,11 @@ public class RSA {
     }
 
     private String sign(byte[] messageBytes, String algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException, SignatureException {
-
         Signature privateSignature = Signature.getInstance(algorithm);
         privateSignature.initSign(this.privateKey);
         privateSignature.update(messageBytes);
         byte[] signature = privateSignature.sign();
-        return Base64.encodeToString(signature, Base64.DEFAULT);
+        return Base64.encodeToString(signature, Base64.NO_WRAP);
     }
 
     // b64 message
@@ -214,7 +214,7 @@ public class RSA {
         Signature publicSignature = Signature.getInstance(algorithm);
         publicSignature.initVerify(this.publicKey);
         byte[] messageBytes = message.getBytes(CharsetUTF_8);
-        byte[] signatureBytes = Base64.decode(signature, Base64.DEFAULT);
+        byte[] signatureBytes = Base64.decode(signature, Base64.NO_WRAP);
         return verify(signatureBytes, messageBytes, algorithm);
     }
 
@@ -250,9 +250,9 @@ public class RSA {
     }
 
     private PrivateKey pkcs1ToPrivateKey(byte[] pkcs1PrivateKey) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        ASN1InputStream in = new ASN1InputStream(pkcs1PrivateKey);
-        ASN1Primitive obj = in.readObject();
-        RSAPrivateKey keyStruct = RSAPrivateKey.getInstance(obj);
+//        ASN1InputStream in = new ASN1InputStream(pkcs1PrivateKey);
+//        ASN1Primitive obj = in.readObject();
+        RSAPrivateKey keyStruct = RSAPrivateKey.getInstance(pkcs1PrivateKey);
         RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(keyStruct.getModulus(), keyStruct.getPrivateExponent());
         KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM);
         return keyFactory.generatePrivate(keySpec);
