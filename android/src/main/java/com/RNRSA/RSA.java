@@ -259,16 +259,18 @@ public class RSA {
     }
 
     private byte[] publicKeyToPkcs1(PublicKey publicKey) throws IOException {
-        SubjectPublicKeyInfo spkInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-        ASN1Primitive primitive = spkInfo.parsePublicKey();
-        return primitive.getEncoded();
+        // SubjectPublicKeyInfo spkInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+        // ASN1Primitive primitive = spkInfo.parsePublicKey();
+        // return primitive.getEncoded();
+        return publicKey.getEncoded();
     }
 
     private byte[] privateKeyToPkcs1(PrivateKey privateKey) throws IOException {
-        PrivateKeyInfo pkInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
-        ASN1Encodable encodeable = pkInfo.parsePrivateKey();
-        ASN1Primitive primitive = encodeable.toASN1Primitive();
-        return primitive.getEncoded();
+        // PrivateKeyInfo pkInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
+        // ASN1Encodable encodeable = pkInfo.parsePrivateKey();
+        // ASN1Primitive primitive = encodeable.toASN1Primitive();
+        // return primitive.getEncoded();
+        return privateKey.getEncoded();
     }
 
     public void loadFromKeystore() throws KeyStoreException, UnrecoverableEntryException, NoSuchAlgorithmException, IOException, CertificateException {
